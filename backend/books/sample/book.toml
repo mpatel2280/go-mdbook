@@ -1,0 +1,8 @@
+[book]
+name = "Sample Book"
+authors = ["Admin"]
+multilingual = false
+src = "src"
+
+[output.html]
+default-theme = "light"

@@ -1,0 +1,47 @@
+services:
+  mongo:
+    image: mongo:7
+    container_name: mdbook-mongo
+    restart: unless-stopped
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongo_data:/data/db
+
+  backend:
+    build:
+      context: ./backend
+    container_name: mdbook-backend
+    restart: unless-stopped
+    environment:
+      API_ADDR: ":8080"
+      MONGO_URI: "mongodb://mongo:27017"
+      MONGO_DB: "mdbook"
+      JWT_SECRET: "change_me"
+      ADMIN_EMAIL: "admin@example.com"
+      ADMIN_PASSWORD: "admin123"
+      BOOKS_ROOT: "/data/books"
+      BOOKS_BUILD_ROOT: "/data/build"
+    volumes:
+      - ./backend/books:/data/books
+      - books_build:/data/build
+    depends_on:
+      - mongo
+    ports:
+      - "8080:8080"
+
+  frontend:
+    build:
+      context: ./frontend
+      args:
+        VITE_API_URL: "http://localhost:8080/api"
+    container_name: mdbook-frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "3000:80"
+
+volumes:
+  mongo_data:
+  books_build:

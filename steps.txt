@@ -1,0 +1,71 @@
+Lets create a complete new project with golang as backend, reactjs as front end, mongodb as nosql database as a whole wrapper for rust based mdbook.
+Implement Auth functionality with admin and reader role where books only accessible by authorized user only. Admin can manage books and user section too.  Use docker for backend and frontend containers.
+
+-----------------------------------------------------------------------------------------
+Summary:
+- Created a full-stack mdBook portal with Go + MongoDB backend, React frontend, role-based auth, and Dockerized services.
+- Implemented admin and reader roles, protected book access, admin user/book management, and mdBook build/serve support.
+- Added a sample mdBook source under `backend/books/sample` and wired it into the workflow.
+
+Key files:
+- `docker-compose.yml`
+- `backend/cmd/server/main.go`
+- `backend/internal/handlers/handlers.go`
+- `backend/internal/services/mdbook.go`
+- `frontend/src/App.jsx`
+- `frontend/src/api/client.js`
+
+Notes:
+- To view the sample book, log in as admin, create a book with slug `sample`, then click “Build” and “Open”.
+- `go mod tidy` was run to generate `backend/go.sum`.
+
+I didn’t run the app or containers here.
+
+If you want, I can:
+1. Add file upload endpoints so admins can push mdBook content via the UI.
+2. Add a proper user management UI (activate/deactivate, role change, delete).
+3. Add tests and CI (Go unit tests + frontend lint/build).
+-----------------------------------------------------------------------------------------
+
+Summary:
+- Added admin upload endpoint for mdBook source zips and safe extraction to each book’s source directory.
+- Expanded the admin UI with upload controls, role changes, activate/deactivate, and delete actions.
+- Added Go unit tests, ESLint config, and a GitHub Actions CI workflow for Go tests + frontend lint/build.
+
+Key changes:
+- Backend upload and zip extraction: `backend/internal/handlers/handlers.go`, `backend/internal/services/zip.go`, `backend/cmd/server/main.go`
+- Admin UI updates: `frontend/src/App.jsx`, `frontend/src/styles/app.css`, `frontend/src/api/client.js`
+- Tests and CI: `backend/internal/auth/auth_test.go`, `backend/internal/utils/slug_test.go`, `.github/workflows/ci.yml`
+- Frontend linting: `frontend/eslint.config.js`, `frontend/package.json`
+
+How to use upload:
+- UI: Admin can click “Upload zip” on a book card and select a `.zip` containing `book.toml` and `src/`.
+- API: `POST /api/admin/books/:id/upload` with `multipart/form-data` field `file`.
+
+Not run:
+- I didn’t run tests or CI locally.
+
+If you want, I can:
+1. Enforce zip validation to ensure `book.toml` exists at the root.
+2. Add UI feedback for upload progress and build status.
+3. Add API tests using `httptest` for auth and admin routes.
+-----------------------------------------------------------------------------------------
+
+1. `docker-compose up --build`
+2. Open `http://localhost:3000`
+3. Login with admin:
+   - Email: `admin@example.com`
+   - Password: `admin123`
+4. Create a book with slug `sample`
+5. Click “Upload zip” to upload your mdBook source (or use the bundled `backend/books/sample` by uploading a zip of it)
+6. Click “Build” then “Open”
+
+If you want local (non-Docker) steps too, tell me which OS and I’ll add them.
+
+-----------------------------------------------------------------------------------------
+docker-compose exec mongo mongosh
+show dbs
+use mdbook 
+show collections
+db.users.find().pretty()
+db.books.find().pretty()
