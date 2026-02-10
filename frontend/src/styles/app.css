@@ -125,6 +125,29 @@ button.danger {
   margin-bottom: 32px;
 }
 
+.topbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.subnav {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.nav-active {
+  background: var(--ink);
+  color: white;
+}
+
 .section {
   margin-top: 32px;
 }
@@ -220,6 +243,11 @@ button.danger {
   .topbar {
     flex-direction: column;
     align-items: flex-start;
+  }
+  .topbar-actions {
+    width: 100%;
+    justify-content: space-between;
+    flex-wrap: wrap;
   }
   .book-card {
     flex-direction: column;

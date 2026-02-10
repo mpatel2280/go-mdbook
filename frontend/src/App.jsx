@@ -8,6 +8,9 @@ function App() {
   const [selectedBook, setSelectedBook] = useState(null)
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
+  const [activeModule, setActiveModule] = useState('books')
+  const [booksView, setBooksView] = useState('list')
+  const [usersView, setUsersView] = useState('list')
 
   const role = useMemo(() => getRole(), [auth])
   const email = useMemo(() => getEmail(), [auth])
@@ -196,45 +199,103 @@ function App() {
           <h2>{email}</h2>
           <p className="muted">Role: {role}</p>
         </div>
-        <button onClick={handleLogout} className="ghost">Logout</button>
+        <div className="topbar-actions">
+          <nav className="nav">
+            <button
+              className={activeModule === 'books' ? 'nav-active' : 'ghost'}
+              onClick={() => setActiveModule('books')}
+            >
+              Books
+            </button>
+            {role === 'admin' && (
+              <button
+                className={activeModule === 'users' ? 'nav-active' : 'ghost'}
+                onClick={() => setActiveModule('users')}
+              >
+                Users
+              </button>
+            )}
+          </nav>
+          <button onClick={handleLogout} className="ghost">Logout</button>
+        </div>
       </header>
 
       {error && <p className="error">{error}</p>}
 
-      <section className="section">
-        <div className="section-header">
-          <h3>Books</h3>
-          {loading && <span className="muted">Loading...</span>}
-        </div>
-        <div className="books">
-          {books.map((book) => (
-            <div key={book.id} className="book-card">
-              <div>
-                <h4>{book.title}</h4>
-                <p className="muted">{book.slug}</p>
-              </div>
-              <div className="book-actions">
-                <button onClick={() => setSelectedBook(book)}>Open</button>
-                {role === 'admin' && (
-                  <>
-                    <label className="upload">
-                      Upload zip
-                      <input
-                        type="file"
-                        accept=".zip"
-                        onChange={(e) => handleUploadBook(book.id, e.target.files[0])}
-                      />
-                    </label>
-                    <button className="ghost" onClick={() => handleBuildBook(book.id)}>Build</button>
-                    <button className="danger" onClick={() => handleDeleteBook(book.id)}>Delete</button>
-                  </>
-                )}
+      {activeModule === 'books' && (
+        <section className="section">
+          <div className="section-header">
+            <div>
+              <h3>Books</h3>
+              {loading && <span className="muted">Loading...</span>}
+            </div>
+            {role === 'admin' && (
+              <nav className="subnav">
+                <button
+                  className={booksView === 'list' ? 'nav-active' : 'ghost'}
+                  onClick={() => setBooksView('list')}
+                >
+                  List Books
+                </button>
+                <button
+                  className={booksView === 'create' ? 'nav-active' : 'ghost'}
+                  onClick={() => setBooksView('create')}
+                >
+                  Create Book
+                </button>
+              </nav>
+            )}
+          </div>
+          {booksView === 'list' && (
+            <div className="books">
+              {books.map((book) => (
+                <div key={book.id} className="book-card">
+                  <div>
+                    <h4>{book.title}</h4>
+                    <p className="muted">{book.slug}</p>
+                  </div>
+                  <div className="book-actions">
+                    <button onClick={() => setSelectedBook(book)}>Open</button>
+                    {role === 'admin' && (
+                      <>
+                        <label className="upload">
+                          Upload zip
+                          <input
+                            type="file"
+                            accept=".zip"
+                            onChange={(e) => handleUploadBook(book.id, e.target.files[0])}
+                          />
+                        </label>
+                        <button className="ghost" onClick={() => handleBuildBook(book.id)}>Build</button>
+                        <button className="danger" onClick={() => handleDeleteBook(book.id)}>Delete</button>
+                      </>
+                    )}
+                  </div>
+                </div>
+              ))}
+              {books.length === 0 && <p className="muted">No books yet.</p>}
+            </div>
+          )}
+          {role === 'admin' && booksView === 'create' && (
+            <div className="card-grid">
+              <div className="card">
+                <h3>Create Book</h3>
+                <form onSubmit={handleCreateBook} className="form">
+                  <label>
+                    Title
+                    <input name="title" type="text" required />
+                  </label>
+                  <label>
+                    Slug (optional)
+                    <input name="slug" type="text" />
+                  </label>
+                  <button type="submit">Create</button>
+                </form>
               </div>
             </div>
-          ))}
-          {books.length === 0 && <p className="muted">No books yet.</p>}
-        </div>
-      </section>
+          )}
+        </section>
+      )}
 
       {selectedBook && (
         <section className="section viewer">
@@ -246,46 +307,55 @@ function App() {
         </section>
       )}
 
-      {role === 'admin' && (
+      {role === 'admin' && activeModule === 'users' && (
         <section className="section admin">
-          <div className="card-grid">
-            <div className="card">
-              <h3>Create User</h3>
-              <form onSubmit={handleCreateUser} className="form">
-                <label>
-                  Email
-                  <input name="email" type="email" required />
-                </label>
-                <label>
-                  Password
-                  <input name="password" type="password" required />
-                </label>
-                <label>
-                  Role
-                  <select name="role" defaultValue="reader">
-                    <option value="reader">reader</option>
-                    <option value="admin">admin</option>
-                  </select>
-                </label>
-                <button type="submit">Create</button>
-              </form>
+          <div className="section-header">
+            <div>
+              <h3>Users</h3>
             </div>
-            <div className="card">
-              <h3>Create Book</h3>
-              <form onSubmit={handleCreateBook} className="form">
-                <label>
-                  Title
-                  <input name="title" type="text" required />
-                </label>
-                <label>
-                  Slug (optional)
-                  <input name="slug" type="text" />
-                </label>
-                <button type="submit">Create</button>
-              </form>
-            </div>
+            <nav className="subnav">
+              <button
+                className={usersView === 'list' ? 'nav-active' : 'ghost'}
+                onClick={() => setUsersView('list')}
+              >
+                List Users
+              </button>
+              <button
+                className={usersView === 'create' ? 'nav-active' : 'ghost'}
+                onClick={() => setUsersView('create')}
+              >
+                Create User
+              </button>
+            </nav>
           </div>
 
+          {usersView === 'create' && (
+            <div className="card-grid">
+              <div className="card">
+                <h3>Create User</h3>
+                <form onSubmit={handleCreateUser} className="form">
+                  <label>
+                    Email
+                    <input name="email" type="email" required />
+                  </label>
+                  <label>
+                    Password
+                    <input name="password" type="password" required />
+                  </label>
+                  <label>
+                    Role
+                    <select name="role" defaultValue="reader">
+                      <option value="reader">reader</option>
+                      <option value="admin">admin</option>
+                    </select>
+                  </label>
+                  <button type="submit">Create</button>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {usersView === 'list' && (
             <div className="card">
               <h3>Users</h3>
               <div className="users">
@@ -318,8 +388,10 @@ function App() {
                 {users.length === 0 && <p className="muted">No users found.</p>}
               </div>
             </div>
+          )}
         </section>
       )}
+
     </div>
   )
 }
