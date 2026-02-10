@@ -9,7 +9,8 @@ Full-stack mdBook portal with Go + MongoDB backend and React frontend. Includes 
 3. Login with the default admin:
    - Email: `admin@example.com`
    - Password: `admin123`
-4. Create a book with slug `sample` and build it to view the bundled sample content.
+4. Create users from the Admin panel (self-registration is disabled).
+5. Create a book with slug `sample` and build it to view the bundled sample content.
 
 The backend expects mdBook-compatible source folders under `backend/books/<slug>`.
 A sample book exists at `backend/books/sample`.

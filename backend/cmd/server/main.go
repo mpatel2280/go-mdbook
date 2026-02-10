@@ -36,7 +36,6 @@ func main() {
 
 	api := r.Group("/api")
 	{
-		api.POST("/auth/register", h.Register)
 		api.POST("/auth/login", h.Login)
 	}
 
