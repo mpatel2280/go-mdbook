@@ -247,33 +247,56 @@ function App() {
             )}
           </div>
           {booksView === 'list' && (
-            <div className="books">
-              {books.map((book) => (
-                <div key={book.id} className="book-card">
-                  <div>
-                    <h4>{book.title}</h4>
-                    <p className="muted">{book.slug}</p>
-                  </div>
-                  <div className="book-actions">
-                    <button onClick={() => setSelectedBook(book)}>Open</button>
-                    {role === 'admin' && (
-                      <>
-                        <label className="upload">
-                          Upload zip
-                          <input
-                            type="file"
-                            accept=".zip"
-                            onChange={(e) => handleUploadBook(book.id, e.target.files[0])}
-                          />
-                        </label>
-                        <button className="ghost" onClick={() => handleBuildBook(book.id)}>Build</button>
-                        <button className="danger" onClick={() => handleDeleteBook(book.id)}>Delete</button>
-                      </>
-                    )}
-                  </div>
+            <div className="mdbook-layout">
+              <aside className="mdbook-sidebar">
+                <h4>Library</h4>
+                <div className="mdbook-list">
+                  {books.map((book) => (
+                    <button
+                      key={book.id}
+                      className={`mdbook-item ${selectedBook?.id === book.id ? 'active' : ''}`}
+                      onClick={() => setSelectedBook(book)}
+                    >
+                      <span>{book.title}</span>
+                      <span className="muted">{book.slug}</span>
+                    </button>
+                  ))}
+                  {books.length === 0 && <p className="muted">No books yet.</p>}
                 </div>
-              ))}
-              {books.length === 0 && <p className="muted">No books yet.</p>}
+              </aside>
+              <main className="mdbook-main">
+                {!selectedBook && (
+                  <div className="mdbook-empty">
+                    <h3>Select a book</h3>
+                    <p className="muted">Choose a title from the left to view its content.</p>
+                  </div>
+                )}
+                {selectedBook && (
+                  <>
+                    <div className="mdbook-toolbar">
+                      <div>
+                        <h4>{selectedBook.title}</h4>
+                        <p className="muted">{selectedBook.slug}</p>
+                      </div>
+                      {role === 'admin' && (
+                        <div className="book-actions">
+                          <label className="upload">
+                            Upload zip
+                            <input
+                              type="file"
+                              accept=".zip"
+                              onChange={(e) => handleUploadBook(selectedBook.id, e.target.files[0])}
+                            />
+                          </label>
+                          <button className="ghost" onClick={() => handleBuildBook(selectedBook.id)}>Build</button>
+                          <button className="danger" onClick={() => handleDeleteBook(selectedBook.id)}>Delete</button>
+                        </div>
+                      )}
+                    </div>
+                    <iframe title="mdbook" src={bookContentUrl(selectedBook.id)} />
+                  </>
+                )}
+              </main>
             </div>
           )}
           {role === 'admin' && booksView === 'create' && (
@@ -294,16 +317,6 @@ function App() {
               </div>
             </div>
           )}
-        </section>
-      )}
-
-      {selectedBook && (
-        <section className="section viewer">
-          <div className="section-header">
-            <h3>Viewer</h3>
-            <button className="ghost" onClick={() => setSelectedBook(null)}>Close</button>
-          </div>
-          <iframe title="mdbook" src={bookContentUrl(selectedBook.id)} />
         </section>
       )}
 
