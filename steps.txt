@@ -63,6 +63,13 @@ If you want, I can:
 If you want local (non-Docker) steps too, tell me which OS and I’ll add them.
 
 -----------------------------------------------------------------------------------------
+
+lets remove registration page from login and allow only admin to create user
+
+-----------------------------------------------------------------------------------------
+
+
+
 docker-compose exec mongo mongosh
 show dbs
 use mdbook 

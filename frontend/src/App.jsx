@@ -61,19 +61,6 @@ function App() {
     }
   }
 
-  async function handleRegister(e) {
-    e.preventDefault()
-    setError('')
-    const form = new FormData(e.currentTarget)
-    const payload = { email: form.get('email'), password: form.get('password') }
-    try {
-      await api.register(payload)
-      setError('Registration successful. Please log in.')
-    } catch (err) {
-      setError(err.message)
-    }
-  }
-
   async function handleCreateUser(e) {
     e.preventDefault()
     setError('')
@@ -193,20 +180,6 @@ function App() {
                 <input name="password" type="password" required />
               </label>
               <button type="submit">Sign in</button>
-            </form>
-          </div>
-          <div className="card">
-            <h2>Register</h2>
-            <form onSubmit={handleRegister} className="form">
-              <label>
-                Email
-                <input name="email" type="email" required />
-              </label>
-              <label>
-                Password
-                <input name="password" type="password" required />
-              </label>
-              <button type="submit">Create reader</button>
             </form>
           </div>
         </section>

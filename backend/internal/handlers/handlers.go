@@ -36,37 +36,6 @@ func (h *Handler) books() *mongo.Collection {
 	return h.client.Database(h.cfg.MongoDB).Collection("books")
 }
 
-type registerRequest struct {
-	Email    string `json:"email"`
-	Password string `json:"password"`
-}
-
-func (h *Handler) Register(c *gin.Context) {
-	var req registerRequest
-	if err := c.ShouldBindJSON(&req); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "invalid body"})
-		return
-	}
-	if req.Email == "" || req.Password == "" {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "email and password required"})
-		return
-	}
-
-	hash, err := auth.HashPassword(req.Password)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "failed to hash"})
-		return
-	}
-
-	user := models.User{Email: strings.ToLower(req.Email), PasswordHash: hash, Role: "reader", Active: true}
-	_, err = h.users().InsertOne(h.cfg.Context(), user)
-	if err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "email already exists"})
-		return
-	}
-	c.JSON(http.StatusCreated, gin.H{"message": "registered"})
-}
-
 type loginRequest struct {
 	Email    string `json:"email"`
 	Password string `json:"password"`
