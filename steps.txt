@@ -67,6 +67,7 @@ If you want local (non-Docker) steps too, tell me which OS and I’ll add them.
 1 - lets remove registration page from login and allow only admin to create user
 2 - after login lets separate user and book management in two different module, separate them in diff links
 3 - under books, create 2 different links - list books and create new books and move functionality accodingly
+4 - rust mdbook having simple UI, can we create similar ui where listing of all books on left panel and content shown on middle section? so that UI became identical with mdbook 
 -----------------------------------------------------------------------------------------
 
 
